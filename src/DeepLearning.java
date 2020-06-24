@@ -1,3 +1,4 @@
+import classes.Encoder;
 import classes.MultiLayerPerceptron;
 import utilities.Datasets;
 
@@ -14,10 +15,10 @@ public class DeepLearning {
 
         /* Parameters */
         int totalEpoch = 100000;
-        int[] layerSize = new int[]{5,8};
+        int[] layerSize = new int[]{7,14};
 
         /* Load dataset */
-        List<List<Integer>> fonts = Datasets.getDataset(1);
+        List<List<Double>> fonts = Datasets.getDataset(1);
 
         /* Set up layer list */
         List<Integer> layerList = new ArrayList<>();
@@ -25,20 +26,18 @@ public class DeepLearning {
             layerList.add(i);
         }
 
-        /* Loading layer list to encoder and decoder */
-        MultiLayerPerceptron encoder = new MultiLayerPerceptron(layerList);
-        Collections.reverse(layerList);
-        MultiLayerPerceptron decoder = new MultiLayerPerceptron(layerList);
+        /* Loading layer list to encoder */
+        Encoder encoder = new Encoder(layerList);
 
-        /* Training *//*
+        /* Training */
         for(int i = 0; i < totalEpoch; i++) {
-            for(int j = 0; j < fonts.size(); j++){
-                double error = net.backPropagate(numbers.get(j), outputs.get(j));
+            for (List<Double> font : fonts) {
+                encoder.train(font, font);
             }
         }
 
-        *//* Test *//*
-        int a = 0;
+        /* Test */
+        /*int a = 0;
         for(List<Double> n : numbers){
             List<Double> output = net.feedForward(n);
             System.out.printf("input: %d \t",a);

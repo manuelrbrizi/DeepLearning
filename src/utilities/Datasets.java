@@ -109,7 +109,7 @@ public class Datasets {
         {0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f}   // 0x7f, DEL
     };
 
-    public static List<List<Integer>> getDataset(int number){
+    public static List<List<Double>> getDataset(int number){
         int[][] dataset;
 
         switch (number){
@@ -126,14 +126,14 @@ public class Datasets {
                 dataset = font1;
         }
 
-        List<List<Integer>> toReturn = new ArrayList<>();
-        List<Integer> toAdd;
+        List<List<Double>> toReturn = new ArrayList<>();
+        List<Double> toAdd;
 
         for(int[] row : dataset){
             toAdd = new ArrayList<>();
 
             for(Integer i : row){
-                toAdd.add(i);
+                toAdd.add(new Double(i));
             }
 
             toReturn.add(toAdd);

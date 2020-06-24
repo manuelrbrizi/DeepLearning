@@ -67,7 +67,7 @@ public class MultiLayerPerceptron {
         return (x - Math.pow(x, 2));
     }
 
-    public double backPropagate(List<Double> input, List<Double> output){
+    public List<Double> backPropagate(List<Double> input, List<Double> output){
         // Propagamos hacia adelante el input y conseguimos el output de la red
         List<Double> predictedOutput = feedForward(input);
 
@@ -110,16 +110,56 @@ public class MultiLayerPerceptron {
             }
         }
 
-        double totalError = 0.0;
-
-        for(int i = 0; i < output.size(); i++){
-            totalError += Math.abs(predictedOutput.get(i) - output.get(i));
-        }
-
-        totalError = totalError / output.size();
-        return totalError;
+        return predictedOutput;
     }
 
+    public void backPropagateOnly(List<Double> input) {
+
+        // ESTAMOS IMPLEMENTANDOLO :)
+
+        /*
+
+        // Calculamos el error entre la salida esperada y la salida obtenida con feed forward
+        for(int i = 0; i < layers.get(layers.size()-1).size; i++){
+            //Actualizamos el delta de la capa de salida que es el error como lo calculabamos antes
+            // (expected - predicted) * g'
+            layers.get(layers.size()-1).perceptrons.get(i).delta = (output.get(i) - input.get(i)) * dExp(input.get(i));
+        }
+        double error;
+
+        // Empezamos a recorrer desde la ultima capa oculta antes de la capa de output
+        for(int i = layers.size() - 2; i >= 0; i--){
+            // Recorremos todos sus perceptrones
+            for(int j = 0; j < layers.get(i).size; j++){
+                error = 0.0;
+                // Recorremos todos los perceptrones de la capa siguiente
+                for(int k = 0; k < layers.get(i + 1).size; k++){
+                    // Acumulamos el error para un perceptron con la capa que le sigue
+                    // error += w*delta
+                    error += layers.get(i+1).perceptrons.get(k).delta * layers.get(i+1).perceptrons.get(k).weights.get(j);
+                }
+                // Seteamos el nuevo delta para todos los perceptrones de la capa
+                // delta = error*g' = sum(w*delta)*g'
+                layers.get(i).perceptrons.get(j).delta = error * dExp(layers.get(i).perceptrons.get(j).activation);
+            }
+
+            // Con todos los deltas seteados volvemos a recorrer las layers para actualizar los pesos
+            for(int j = 0; j < layers.get(i+1).size; j++){
+                for(int k = 0; k < layers.get(i).size; k++){
+                    double weight = layers.get(i+1).perceptrons.get(j).weights.get(k);
+                    // dw = nu*delta*activation
+                    double dw = 0.1 * layers.get(i+1).perceptrons.get(j).delta*layers.get(i).perceptrons.get(k).activation;
+                    // weight = w + dw
+                    layers.get(i+1).perceptrons.get(j).weights.set(k,weight + dw);
+                }
+                // Actualizamos los bias de los perceptrones
+                // bias = bias + nu*delta
+                layers.get(i+1).perceptrons.get(j).bias += 0.1 * layers.get(i+1).perceptrons.get(j).delta;
+            }
+        }
 
 
+        */
+
+    }
 }
