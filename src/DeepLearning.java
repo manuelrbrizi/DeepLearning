@@ -1,24 +1,20 @@
 import classes.Encoder;
-import classes.MultiLayerPerceptron;
 import utilities.Datasets;
 
-import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class DeepLearning {
 
-
-
     public static void main(String[] args){
 
         /* Parameters */
-        int totalEpoch = 100000;
-        int[] layerSize = new int[]{7,14};
+        int totalEpoch = 25000;
+        int[] layerSize = new int[]{35,14};
+        int currentDataset = 3;
 
         /* Load dataset */
-        List<List<Double>> fonts = Datasets.getDataset(1);
+        List<List<Double>> fonts = Datasets.getDataset(currentDataset).subList(0,3);
 
         /* Set up layer list */
         List<Integer> layerList = new ArrayList<>();
@@ -29,6 +25,9 @@ public class DeepLearning {
         /* Loading layer list to encoder */
         Encoder encoder = new Encoder(layerList);
 
+        /* Print information */
+        encoder.printEncoderInformation();
+
         /* Training */
         for(int i = 0; i < totalEpoch; i++) {
             for (List<Double> font : fonts) {
@@ -37,17 +36,31 @@ public class DeepLearning {
         }
 
         /* Test */
-        /*int a = 0;
-        for(List<Double> n : numbers){
-            List<Double> output = net.feedForward(n);
-            System.out.printf("input: %d \t",a);
-            for (Double out : output){
-                System.out.printf("%d\t",Math.round(out));
-            }
-            a++;
-            System.out.println();
+        for(int font = 0; font < 3; font++){
+            List<Double> input = fonts.get(font);
+            List<Double> output = encoder.feedForward(input);
 
-        }*/
+            System.out.println();
+            System.out.println("--- INPUT ---");
+            for(int i = 0; i < input.size(); i++){
+                if(i % 5 == 0){
+                    System.out.println();
+                }
+                System.out.printf("%1.0f ", input.get(i));
+            }
+
+            System.out.println();
+            System.out.println();
+            System.out.println("--- OUTPUT ---");
+
+            for(int i = 0; i < output.size(); i++){
+                if(i % 5 == 0){
+                    System.out.println();
+                }
+                System.out.printf("%1.0f ", output.get(i));
+            }
+        }
+
     }
 
 }

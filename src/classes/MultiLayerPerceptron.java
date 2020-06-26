@@ -17,6 +17,16 @@ public class MultiLayerPerceptron {
         }
     }
 
+    public MultiLayerPerceptron(List<Integer> layerDisp, int prevSize){
+
+        layers = new ArrayList<>();
+        layers.add(new Layer(layerDisp.get(0),prevSize));
+
+        for(int i = 1; i < layerDisp.size(); i++) {
+            layers.add(new Layer(layerDisp.get(i),layerDisp.get(i-1)));
+        }
+    }
+
 
     public List<Double> feedForward(List<Double> input) {
 
@@ -113,11 +123,7 @@ public class MultiLayerPerceptron {
         return predictedOutput;
     }
 
-    public void backPropagateOnly(List<Double> input) {
-
-        // ESTAMOS IMPLEMENTANDOLO :)
-
-        /*
+    public void backPropagateOnly(List<Double> input, List<Double> output) {
 
         // Calculamos el error entre la salida esperada y la salida obtenida con feed forward
         for(int i = 0; i < layers.get(layers.size()-1).size; i++){
@@ -157,9 +163,5 @@ public class MultiLayerPerceptron {
                 layers.get(i+1).perceptrons.get(j).bias += 0.1 * layers.get(i+1).perceptrons.get(j).delta;
             }
         }
-
-
-        */
-
     }
 }

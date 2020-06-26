@@ -129,11 +129,16 @@ public class Datasets {
         List<List<Double>> toReturn = new ArrayList<>();
         List<Double> toAdd;
 
+
+
         for(int[] row : dataset){
             toAdd = new ArrayList<>();
 
             for(Integer i : row){
-                toAdd.add(new Double(i));
+                String s = String.format("%5s", Integer.toBinaryString(i)).replace(' ', '0');
+                for(char c : s.toCharArray()){
+                    toAdd.add(new Double(c - '0'));
+                }
             }
 
             toReturn.add(toAdd);
