@@ -27,7 +27,6 @@ public class MultiLayerPerceptron {
         }
     }
 
-
     public List<Double> feedForward(List<Double> input) {
 
         double excitation;
@@ -38,7 +37,6 @@ public class MultiLayerPerceptron {
         for(int i = 0; i<layers.get(0).size;i++){
             layers.get(0).perceptrons.get(i).activation = input.get(i);
         }
-
 
         // Recorremos todas las capas empezando con la primera oculta
         for(int i = 1; i < layers.size(); i++){
@@ -58,7 +56,6 @@ public class MultiLayerPerceptron {
                 layers.get(i).perceptrons.get(j).activation = activationExp(excitation);
             }
         }
-
 
         // Tomamos los valores de activacion de la ultima capa que es el output de la red dada la entrada
         for(int i = 0; i <  layers.get(layers.size()-1).size; i++){
