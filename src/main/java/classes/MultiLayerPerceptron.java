@@ -17,6 +17,7 @@ public class MultiLayerPerceptron {
         }
     }
 
+
     public List<Double> feedForward(List<Double> input) {
 
         double excitation;
@@ -27,6 +28,7 @@ public class MultiLayerPerceptron {
         for(int i = 0; i<layers.get(0).size;i++){
             layers.get(0).perceptrons.get(i).activation = input.get(i);
         }
+
 
         // Recorremos todas las capas empezando con la primera oculta
         for(int i = 1; i < layers.size(); i++){
@@ -47,6 +49,7 @@ public class MultiLayerPerceptron {
             }
         }
 
+
         // Tomamos los valores de activacion de la ultima capa que es el output de la red dada la entrada
         for(int i = 0; i <  layers.get(layers.size()-1).size; i++){
             output.add(layers.get(layers.size()-1).perceptrons.get(i).activation);
@@ -64,7 +67,8 @@ public class MultiLayerPerceptron {
         return (x - Math.pow(x, 2));
     }
 
-    public List<Double> backPropagate(List<Double> input, List<Double> output){
+
+    public double backPropagate(List<Double> input, List<Double> output){
         // Propagamos hacia adelante el input y conseguimos el output de la red
         List<Double> predictedOutput = feedForward(input);
 
@@ -107,7 +111,14 @@ public class MultiLayerPerceptron {
             }
         }
 
-        return predictedOutput;
+        double totalError = 0.0;
+
+        for(int i = 0; i < output.size(); i++){
+            totalError += Math.abs(predictedOutput.get(i) - output.get(i));
+        }
+
+        totalError = totalError / output.size();
+        return totalError;
     }
 
     public List<Perceptron> getLatent(List<Double> input, int latentIndex) {
@@ -138,5 +149,79 @@ public class MultiLayerPerceptron {
         }
 
         return layers.get(latentIndex - 1).perceptrons;
+    }
+
+    public void printLayerWeights(int layer){
+        for(Perceptron p : layers.get(layer).perceptrons){
+            System.out.println("W = " + p.weights);
+        }
+    }
+
+    public void printInformation(){
+        System.out.println("--- ENCODER ---");
+        for(int i = 0; i < layers.size(); i++){
+            System.out.println("Layer " + i + ": " + layers.get(i).size + " neurons\n");
+        }
+    }
+
+    public List<Double> getLatentValues(List<Double> input) {
+        int index = (layers.size()-1)/2;
+        List<Double> toReturn = new ArrayList<>();
+
+        for(int j = 0; j < layers.get(index).size; j++){
+            double excitation = 0.0;
+            // Y todos los perceptrones de la layer anterior
+            for(int k = 0; k < layers.get(index - 1).size; k++){
+                // Calculamos la exitacion de cada perceptron en la capa i
+                excitation += layers.get(index).perceptrons.get(j).weights.get(k) * layers.get(index - 1).perceptrons.get(k).activation;
+            }
+
+            // Sumamos el bias del perceptron
+            excitation += layers.get(index).perceptrons.get(j).bias;
+
+            toReturn.add(excitation);
+        }
+
+        return toReturn;
+    }
+
+    public List<Double> setPointAndFeedForward(List<Double> input) {
+        double excitation;
+        int index = (layers.size()-1)/2;
+
+        List<Double> output = new ArrayList<>();
+
+        // Cargamos el input en la primera capa
+        for(int i = 0; i<layers.get(index).size;i++){
+            layers.get(index).perceptrons.get(i).activation = input.get(i);
+        }
+
+
+        // Recorremos todas las capas empezando con la primera oculta
+        for(int i = index+1; i < layers.size(); i++){
+            // Recorremos todos los perceptrones de una layer
+            for(int j = 0; j < layers.get(i).size; j++){
+                excitation = 0.0;
+                // Y todos los perceptrones de la layer anterior
+                for(int k = 0; k < layers.get(i - 1).size; k++){
+                    // Calculamos la exitacion de cada perceptron en la capa i
+                    excitation += layers.get(i).perceptrons.get(j).weights.get(k) * layers.get(i - 1).perceptrons.get(k).activation;
+                }
+
+                // Sumamos el bias del perceptron
+                excitation += layers.get(i).perceptrons.get(j).bias;
+
+                // Calculamos la activacion del perceptron
+                layers.get(i).perceptrons.get(j).activation = activationExp(excitation);
+            }
+        }
+
+
+        // Tomamos los valores de activacion de la ultima capa que es el output de la red dada la entrada
+        for(int i = 0; i <  layers.get(layers.size()-1).size; i++){
+            output.add(layers.get(layers.size()-1).perceptrons.get(i).activation);
+        }
+
+        return output;
     }
 }
