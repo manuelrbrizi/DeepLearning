@@ -10,7 +10,7 @@ public class DeepLearning {
 
         /* Parameters */
         int totalEpoch = 25000;
-        int[] layerSize = new int[]{35};
+        int[] layerSize = new int[]{35,2,35};
         int currentDataset = 3;
 
         /* Load dataset */
@@ -39,9 +39,11 @@ public class DeepLearning {
         for(int font = 0; font < 3; font++){
             List<Double> input = fonts.get(font);
             List<Double> output = encoder.feedForward(input);
+            List<Double> latentValues = encoder.getLatentValues(input,2);
+
             System.out.println();
             System.out.println("--- LATENT ---");
-            System.out.printf("X = %f, Y = %f\n", encoder.getLatentX(input), encoder.getLatentY(input));
+            System.out.printf("X = %f, Y = %f\n", latentValues.get(0), latentValues.get(1));
 
             System.out.println();
             System.out.println("--- INPUT ---");
