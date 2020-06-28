@@ -1,7 +1,8 @@
 package utilities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
 
 public class Datasets {
     private static final int[][] font1 = {
@@ -122,6 +123,8 @@ public class Datasets {
             case 3:
                 dataset = font3;
                 break;
+            case 4:
+                return getCustomDataset();
             default:
                 dataset = font1;
         }
@@ -147,4 +150,59 @@ public class Datasets {
         return toReturn;
     }
 
+    public static List<Double> makeNoisy(List<Double> font, double noiseProbability) {
+        List<Double> noisyFont = new ArrayList<>();
+        Random  r = new Random(System.currentTimeMillis());
+
+        for(Double d : font){
+            if(r.nextDouble() > noiseProbability){
+                noisyFont.add(d);
+            }
+            else{
+                noisyFont.add(((d == 0)? 1.0 : 0.0));
+            }
+        }
+
+        return noisyFont;
+    }
+
+    private static List<List<Double>> getCustomDataset() {
+        List<List<Double>> toReturn = new ArrayList<>();
+        List<Double> toAdd;
+        Scanner inputReader;
+
+        //File circle = new File(Objects.requireNonNull(Datasets.class.getClassLoader().getResource("circle")).getFile());
+        File square = new File(Objects.requireNonNull(Datasets.class.getClassLoader().getResource("square")).getFile());
+        File star = new File(Objects.requireNonNull(Datasets.class.getClassLoader().getResource("star")).getFile());
+        File triangle = new File(Objects.requireNonNull(Datasets.class.getClassLoader().getResource("triangle")).getFile());
+        File rhomb = new File(Objects.requireNonNull(Datasets.class.getClassLoader().getResource("rhomb")).getFile());
+
+        List<File> fileList = new ArrayList<>();
+        //fileList.add(circle);
+        fileList.add(square);
+        fileList.add(star);
+        fileList.add(triangle);
+        fileList.add(rhomb);
+
+        for(File f : fileList){
+
+            try {
+                inputReader = new Scanner(f);
+            }
+
+            catch (FileNotFoundException ignored){
+                return null;
+            }
+
+            toAdd = new ArrayList<>();
+
+            for (int i = 0; i < 10 * 10; i++) {
+                toAdd.add((double) inputReader.nextInt());
+            }
+
+            toReturn.add(toAdd);
+        }
+
+        return toReturn;
+    }
 }

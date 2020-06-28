@@ -10,11 +10,15 @@ public class DeepLearning {
     public static void main(String[] args){
 
         /* Parameters */
-        int totalEpoch = 100000;
-        int[] layerSize = new int[]{35,2,35};
-        int currentDataset = 3;
-        int subListStart = 0;
-        int subListEnd = 5;
+        int totalEpoch = 50000;                // training epoch quantity
+        int[] layerSize = new int[]{35,2,35};   // neuron quantity in each layer
+        int currentDataset = 3;                 // dataset number (1, 2 or 3)
+        int subListStart = 0;                   // first pattern to learn
+        int subListEnd = 5;                     // last pattern to learn
+        boolean denoisingMode = false;          // false = linear autoencoder, true = denoising autoencoder
+        boolean createNewPattern = false;       // decide if autoencoder will create a random pattern
+        double noiseProbability = 0.15;         // probability of mutate one bit of a pattern
+        int columnWidth = 5;                   // if dataset = 1,2,3 --> width = 5, if dataset = 4 --> width = 10
 
         /* Load dataset */
         List<List<Double>> fonts = Datasets.getDataset(currentDataset);
@@ -34,7 +38,12 @@ public class DeepLearning {
         /* Training */
         for(int i = 0; i < totalEpoch; i++) {
             for (List<Double> font : fonts.subList(subListStart,subListEnd)) {
-                encoder.backPropagate(font,font);
+                if(denoisingMode){
+                    encoder.backPropagate(Datasets.makeNoisy(font,noiseProbability),font);
+                }
+                else{
+                    encoder.backPropagate(font,font);
+                }
             }
         }
 
@@ -46,17 +55,13 @@ public class DeepLearning {
             List<Double> input = fonts.get(font);
             List<Double> output = encoder.feedForward(input);
             List<Double> latentValues = encoder.getLatentValues(input);
+            str.append(String.format("%f,%f\n", latentValues.get(0), latentValues.get(1)));
             latentPoints.add(latentValues);
-
-            System.out.println();
-            System.out.println("--- LATENT ---");
-            System.out.printf("X = %f, Y = %f\n", latentValues.get(0), latentValues.get(1));
-            str.append(String.format("%1.4f,%1.4f\n", latentValues.get(0), latentValues.get(1)));
 
             System.out.println();
             System.out.println("--- INPUT ---");
             for(int i = 0; i < input.size(); i++){
-                if(i % 5 == 0){
+                if(i % columnWidth == 0){
                     System.out.println();
                 }
                 System.out.printf("%1.0f ", input.get(i));
@@ -67,7 +72,7 @@ public class DeepLearning {
             System.out.println("--- OUTPUT ---");
 
             for(int i = 0; i < output.size(); i++){
-                if(i % 5 == 0){
+                if(i % columnWidth == 0){
                     System.out.println();
                 }
                 System.out.printf("%d ", Math.round(output.get(i)));
@@ -75,19 +80,21 @@ public class DeepLearning {
         }
 
         /* Load a new pattern to latent space and decode */
-        List<Double> point = new ArrayList<>();
-        point.add((latentPoints.get(0).get(0) + latentPoints.get(1).get(0) + latentPoints.get(2).get(0))/3);
-        point.add((latentPoints.get(0).get(1) + latentPoints.get(1).get(1) + latentPoints.get(2).get(1))/3);
-        List<Double> newPattern = encoder.setPointAndFeedForward(point);
+        if(createNewPattern){
+            List<Double> point = new ArrayList<>();
+            point.add((latentPoints.get(0).get(0) + latentPoints.get(1).get(0) + latentPoints.get(2).get(0))/3);
+            point.add((latentPoints.get(0).get(1) + latentPoints.get(1).get(1) + latentPoints.get(2).get(1))/3);
+            List<Double> newPattern = encoder.setPointAndFeedForward(point);
 
-        /* Print new pattern */
-        System.out.println();
-        System.out.println("--- NEW PATTERN ---");
-        for(int i = 0; i < newPattern.size(); i++){
-            if(i % 5 == 0){
-                System.out.println();
+            /* Print new pattern */
+            System.out.println();
+            System.out.println("--- NEW PATTERN ---");
+            for(int i = 0; i < newPattern.size(); i++){
+                if(i % columnWidth == 0){
+                    System.out.println();
+                }
+                System.out.printf("%1.0f ", newPattern.get(i));
             }
-            System.out.printf("%1.0f ", newPattern.get(i));
         }
 
         /* Just to print latent space points */

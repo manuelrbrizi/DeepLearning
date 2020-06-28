@@ -67,7 +67,6 @@ public class MultiLayerPerceptron {
         return (x - Math.pow(x, 2));
     }
 
-
     public double backPropagate(List<Double> input, List<Double> output){
         // Propagamos hacia adelante el input y conseguimos el output de la red
         List<Double> predictedOutput = feedForward(input);
@@ -76,7 +75,7 @@ public class MultiLayerPerceptron {
         for(int i = 0; i < layers.get(layers.size()-1).size; i++){
             //Actualizamos el delta de la capa de salida que es el error como lo calculabamos antes
             // (expected - predicted) * g'
-            layers.get(layers.size()-1).perceptrons.get(i).delta = (output.get(i) - predictedOutput.get(i)) * dExp(predictedOutput.get(i));
+            layers.get(layers.size()-1).perceptrons.get(i).delta = (output.get(i) - predictedOutput.get(i)) * activationExp(predictedOutput.get(i));
         }
         double error;
 
@@ -93,7 +92,7 @@ public class MultiLayerPerceptron {
                 }
                 // Seteamos el nuevo delta para todos los perceptrones de la capa
                 // delta = error*g' = sum(w*delta)*g'
-                layers.get(i).perceptrons.get(j).delta = error * dExp(layers.get(i).perceptrons.get(j).activation);
+                layers.get(i).perceptrons.get(j).delta = error * activationExp(layers.get(i).perceptrons.get(j).activation);
             }
 
             // Con todos los deltas seteados volvemos a recorrer las layers para actualizar los pesos
@@ -119,36 +118,6 @@ public class MultiLayerPerceptron {
 
         totalError = totalError / output.size();
         return totalError;
-    }
-
-    public List<Perceptron> getLatent(List<Double> input, int latentIndex) {
-        double excitation;
-
-        // Cargamos el input en la primera capa
-        for (int i = 0; i < layers.get(0).size; i++) {
-            layers.get(0).perceptrons.get(i).activation = input.get(i);
-        }
-
-        // Recorremos todas las capas empezando con la primera oculta
-        for (int i = 1; i < latentIndex; i++) {
-            // Recorremos todos los perceptrones de una layer
-            for (int j = 0; j < layers.get(i).size; j++) {
-                excitation = 0.0;
-                // Y todos los perceptrones de la layer anterior
-                for (int k = 0; k < layers.get(i - 1).size; k++) {
-                    // Calculamos la exitacion de cada perceptron en la capa i
-                    excitation += layers.get(i).perceptrons.get(j).weights.get(k) * layers.get(i - 1).perceptrons.get(k).activation;
-                }
-
-                // Sumamos el bias del perceptron
-                excitation += layers.get(i).perceptrons.get(j).bias;
-
-                // Calculamos la activacion del perceptron
-                layers.get(i).perceptrons.get(j).activation = activationExp(excitation);
-            }
-        }
-
-        return layers.get(latentIndex - 1).perceptrons;
     }
 
     public void printLayerWeights(int layer){
@@ -195,7 +164,6 @@ public class MultiLayerPerceptron {
         for(int i = 0; i<layers.get(index).size;i++){
             layers.get(index).perceptrons.get(i).activation = input.get(i);
         }
-
 
         // Recorremos todas las capas empezando con la primera oculta
         for(int i = index+1; i < layers.size(); i++){
