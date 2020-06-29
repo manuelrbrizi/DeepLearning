@@ -8,7 +8,6 @@ public class MultiLayerPerceptron {
     public List<Layer> layers;
 
     public MultiLayerPerceptron(List<Integer> layerDisp){
-
         layers = new ArrayList<>();
         layers.add(new Layer(layerDisp.get(0),0));
 
@@ -16,7 +15,6 @@ public class MultiLayerPerceptron {
             layers.add(new Layer(layerDisp.get(i),layerDisp.get(i-1)));
         }
     }
-
 
     public List<Double> feedForward(List<Double> input) {
 
@@ -64,7 +62,18 @@ public class MultiLayerPerceptron {
     }
 
     private double dExp(double x){
-        return (x - Math.pow(x, 2));
+        return (x - Math.pow(x, 2));/*
+        double exp = Math.exp(-x);
+        return exp/Math.pow((1+exp),2);*/
+    }
+
+    private double activationTan(double excitation){
+        return Math.tanh(excitation);
+    }
+
+    private double dTan(double x){
+        double tan = activationTan(x);
+        return 1 - Math.pow(tan,2);
     }
 
     public double backPropagate(List<Double> input, List<Double> output){
@@ -184,12 +193,81 @@ public class MultiLayerPerceptron {
             }
         }
 
-
         // Tomamos los valores de activacion de la ultima capa que es el output de la red dada la entrada
         for(int i = 0; i <  layers.get(layers.size()-1).size; i++){
             output.add(layers.get(layers.size()-1).perceptrons.get(i).activation);
         }
 
         return output;
+    }
+
+    public void makeWeightsUnitary(){
+        for(Layer l : layers){
+            for(Perceptron p : l.perceptrons){
+                double sum = 0.0;
+
+                for(Double d : p.weights){
+                    sum += d * d;
+                }
+
+                for(int i = 0; i < p.weights.size(); i++){
+                    p.weights.set(i, p.weights.get(i)/Math.sqrt(sum));
+                }
+            }
+        }
+    }
+
+    public void mirrorWeights(){
+        for(int i = 1; i < Math.floor((double) layers.size()/2); i++){
+            List<List<Double>> weightList = new ArrayList<>();
+
+            for(Perceptron p : layers.get(i).perceptrons){
+                weightList.add(p.weights);
+            }
+
+            weightList = transpose(weightList);
+
+            for(int j = 0; j < layers.get(layers.size()-1-i).perceptrons.size(); j++){
+                //layers.get(layers.size()-1-i).perceptrons.get(j).setWeights(weightList.get(j));
+            }
+        }
+    }
+
+    private List<List<Double>> transpose(List<List<Double>> list){
+        List<List<Double>> toReturn = new ArrayList<>();
+        System.out.println("ACA VA LA MATRIX");
+        for(List<Double> d : list){
+            System.out.println(d);
+        }
+        System.out.println();
+
+        for(int i = 0; i < list.get(0).size(); i++){
+            List<Double> toAdd = new ArrayList<>();
+
+            for(int j = 0; j < list.size(); j++){
+                toAdd.add(list.get(j).get(i));
+            }
+
+            toReturn.add(toAdd);
+        }
+
+        System.out.println();
+        for(List<Double> d : toReturn){
+            System.out.println(d);
+        }
+
+
+        return toReturn;
+    }
+
+    public void sameWeights(){
+
+        for(int i = 1; i < (layers.size()-1)/2; i++){
+            for(int j = 0; j < layers.get(i).perceptrons.size(); j++){
+                for(int k = 0; k < layers.get(i).perceptrons.size(); k++){
+                    layers.get(layers.size()-i).perceptrons.get(j).weights.set(k, layers.get(i).perceptrons.get(j).weights.get(k));
+                }
+            }
+        }
     }
 }

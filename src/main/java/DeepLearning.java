@@ -10,11 +10,11 @@ public class DeepLearning {
     public static void main(String[] args){
 
         /* Parameters */
-        int totalEpoch = 50000;                // training epoch quantity
+        int totalEpoch = 10000;                // training epoch quantity
         int[] layerSize = new int[]{35,2,35};   // neuron quantity in each layer
         int currentDataset = 3;                 // dataset number (1, 2 or 3)
         int subListStart = 0;                   // first pattern to learn
-        int subListEnd = 5;                     // last pattern to learn
+        int subListEnd = 4;                     // last pattern to learn
         boolean denoisingMode = false;          // false = linear autoencoder, true = denoising autoencoder
         boolean createNewPattern = false;       // decide if autoencoder will create a random pattern
         double noiseProbability = 0.15;         // probability of mutate one bit of a pattern
@@ -37,21 +37,27 @@ public class DeepLearning {
 
         /* Training */
         for(int i = 0; i < totalEpoch; i++) {
-            for (List<Double> font : fonts.subList(subListStart,subListEnd)) {
-                if(denoisingMode){
-                    encoder.backPropagate(Datasets.makeNoisy(font,noiseProbability),font);
-                }
-                else{
-                    encoder.backPropagate(font,font);
+            for (List<Double> font : fonts.subList(subListStart, subListEnd)) {
+                if (denoisingMode) {
+                    encoder.backPropagate(Datasets.makeNoisy(font, noiseProbability), font);
+                } else {
+                    encoder.backPropagate(font, font);
                 }
             }
         }
+
+        //encoder.printLayerWeights(3);
+        System.out.println();
+        //encoder.sameWeights();
+        encoder.printLayerWeights(1);
+        System.out.println();
+        //encoder.printLayerWeights(3);
 
         /* Test */
         StringBuilder str = new StringBuilder();
         List<List<Double>> latentPoints = new ArrayList<>();
 
-        for(int font = subListStart; font < subListEnd - 1; font++){
+        for(int font = subListStart; font < subListEnd; font++){
             List<Double> input = fonts.get(font);
             List<Double> output = encoder.feedForward(input);
             List<Double> latentValues = encoder.getLatentValues(input);
@@ -64,7 +70,7 @@ public class DeepLearning {
                 if(i % columnWidth == 0){
                     System.out.println();
                 }
-                System.out.printf("%1.0f ", input.get(i));
+                System.out.printf("%1.0f ", Math.abs(input.get(i)));
             }
 
             System.out.println();
@@ -75,7 +81,7 @@ public class DeepLearning {
                 if(i % columnWidth == 0){
                     System.out.println();
                 }
-                System.out.printf("%d ", Math.round(output.get(i)));
+                System.out.printf("%1.0f ", Math.abs(output.get(i)));
             }
         }
 
@@ -93,7 +99,7 @@ public class DeepLearning {
                 if(i % columnWidth == 0){
                     System.out.println();
                 }
-                System.out.printf("%1.0f ", newPattern.get(i));
+                System.out.printf("%1.0f ", Math.abs(newPattern.get(i)));
             }
         }
 

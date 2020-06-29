@@ -132,8 +132,6 @@ public class Datasets {
         List<List<Double>> toReturn = new ArrayList<>();
         List<Double> toAdd;
 
-
-
         for(int[] row : dataset){
             toAdd = new ArrayList<>();
 
@@ -171,18 +169,18 @@ public class Datasets {
         List<Double> toAdd;
         Scanner inputReader;
 
-        //File circle = new File(Objects.requireNonNull(Datasets.class.getClassLoader().getResource("circle")).getFile());
         File square = new File(Objects.requireNonNull(Datasets.class.getClassLoader().getResource("square")).getFile());
         File star = new File(Objects.requireNonNull(Datasets.class.getClassLoader().getResource("star")).getFile());
         File triangle = new File(Objects.requireNonNull(Datasets.class.getClassLoader().getResource("triangle")).getFile());
         File rhomb = new File(Objects.requireNonNull(Datasets.class.getClassLoader().getResource("rhomb")).getFile());
+        File circle = new File(Objects.requireNonNull(Datasets.class.getClassLoader().getResource("circle")).getFile());
 
         List<File> fileList = new ArrayList<>();
-        //fileList.add(circle);
         fileList.add(square);
         fileList.add(star);
         fileList.add(triangle);
         fileList.add(rhomb);
+        fileList.add(circle);
 
         for(File f : fileList){
 
